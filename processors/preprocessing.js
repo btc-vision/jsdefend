@@ -121,6 +121,10 @@ class IfBlockNode extends BlockNode {
         let condition = this.condition;
         condition = condition.replace(/!defined\(([\w\d]+)\)/, (match, p1) => !defines.hasOwnProperty(p1) ? "true" : "false");
         condition = condition.replace(/defined\(([\w\d]+)\)/, (match, p1) => defines.hasOwnProperty(p1) ? "true" : "false");
+        // expr-eval 2.x uses 'and'/'or' instead of '&&'/'||', and '!' is factorial not logical NOT
+        condition = condition.replace(/&&/g, ' and ');
+        condition = condition.replace(/\|\|/g, ' or ');
+        condition = condition.replace(/!(?!=)/g, 'not ');
         return Parser.evaluate(condition, defines);
     }
     /**
